@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<link rel="icon" href="data:," />
+<title>AI Constellation — What X is talking about</title>
+<style>
+  :root {
+    --font: Inter, "Helvetica Neue", system-ui, sans-serif;
+    --ink: #F5F3EE;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #05070D; }
+  body { font-family: var(--font); color: var(--ink); -webkit-font-smoothing: antialiased; }
+  canvas#scene { position: fixed; inset: 0; display: block; touch-action: none; }
+
+  #ui { position: fixed; inset: 0; pointer-events: none; z-index: 10; }
+  #ui > * { pointer-events: auto; }
+
+  /* ---- title block (top-left) ---- */
+  #title { position: absolute; top: 28px; left: 28px; pointer-events: none; }
+  #title .t1 { font-size: 13px; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.55); }
+  #title .t2 { font-size: 22px; font-weight: 600; color: #F5F3EE; margin-top: 6px; }
+  #title .t3 { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+  /* ---- legend (top-right) ---- */
+  #legend { position: absolute; top: 28px; right: 28px; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+  .chip { display: flex; align-items: center; gap: 9px; padding: 5px 9px; border-radius: 8px; cursor: pointer; user-select: none; transition: background 160ms ease, opacity 220ms ease; }
+  .chip:hover { background: rgba(255,255,255,0.06); }
+  .chip .dot { width: 10px; height: 10px; border-radius: 50%; flex: 0 0 auto; }
+  .chip .nm { font-size: 13px; color: rgba(255,255,255,0.75); white-space: nowrap; }
+  .chip.dimmed { opacity: 0.35; }
+
+  /* ---- hint bar (bottom-left) ---- */
+  #hint { position: absolute; bottom: 24px; left: 28px; font-size: 12px; color: rgba(255,255,255,0.35); transition: opacity 1s ease; pointer-events: none; }
+  #hint.gone { opacity: 0; }
+
+  /* ---- hover tooltip ---- */
+  #tip { position: fixed; left: 0; top: 0; transform: translate(-50%, -50%); padding: 6px 12px; border-radius: 999px; background: rgba(12,16,28,0.85); border: 1px solid rgba(255,255,255,0.25); font-size: 12px; color: #F5F3EE; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 150ms ease; backdrop-filter: blur(6px); z-index: 20; }
+  #tip.show { opacity: 1; }
+
+  /* ---- detail panel (right) ---- */
+  #panel { position: absolute; top: 88px; bottom: 24px; right: 24px; width: 360px; max-width: calc(100vw - 48px);
+    background: rgba(12,16,28,0.72); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 16px;
+    transform: translateX(400px); transition: transform 380ms cubic-bezier(0.22,1,0.36,1);
+    display: flex; flex-direction: column; overflow: hidden; }
+  #panel.open { transform: translateX(0); }
+  #panel .pad { padding: 22px 22px 8px; }
+  #panel .modelchip { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+  #panel .modelchip .dot { width: 9px; height: 9px; border-radius: 50%; }
+  #panel .ptopic { font-size: 20px; font-weight: 700; color: #F5F3EE; margin-top: 12px; line-height: 1.25; padding-right: 28px; }
+  #panel .pmeta { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 13px; color: rgba(255,255,255,0.7); }
+  #panel .pmeta .heatwrap { width: 60px; height: 7px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  #panel .pmeta .heatfill { height: 100%; border-radius: 999px; transition: width 500ms cubic-bezier(0.22,1,0.36,1); }
+  #panel .psummary { font-size: 14px; line-height: 1.6; color: rgba(255,255,255,0.72); margin-top: 14px; }
+  #panel .divider { font-size: 11px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.35); margin: 18px 0 4px; }
+  #panel .posts { padding: 0 22px 22px; overflow-y: auto; flex: 1 1 auto; display: flex; flex-direction: column; gap: 10px; }
+  #panel .posts::-webkit-scrollbar { width: 6px; }
+  #panel .posts::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 999px; }
+  .post { display: block; text-decoration: none; background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; transition: background 160ms ease; }
+  .post:hover { background: rgba(255,255,255,0.08); }
+  .post .author { font-size: 13px; font-weight: 600; }
+  .post .ptext { font-size: 13px; line-height: 1.55; color: rgba(255,255,255,0.8); margin-top: 5px; }
+  .post .pfoot { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+  #panel .close { position: absolute; top: 14px; right: 14px; width: 28px; height: 28px; border: none; background: transparent; color: rgba(255,255,255,0.55); font-size: 20px; line-height: 1; cursor: pointer; border-radius: 8px; transition: background 160ms, color 160ms; }
+  #panel .close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+
+  @media (max-width: 640px) {
+    #panel { top: auto; bottom: 0; left: 0; right: 0; width: 100%; max-width: none; height: 55vh; border-radius: 16px 16px 0 0; transform: translateY(100%); }
+    #panel.open { transform: translateY(0); }
+    #legend { top: 158px; right: 16px; gap: 6px; }
+    .chip { padding: 4px 8px; }
+    .chip .nm { font-size: 12px; }
+    #title { top: 20px; left: 16px; }
+    #title .t2 { max-width: calc(100vw - 32px); font-size: 20px; line-height: 1.18; }
+    #hint { left: 16px; right: 16px; bottom: 20px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div id="ui">
+  <div id="title">
+    <div class="t1">AI Constellation</div>
+    <div class="t2">What X is talking about right now</div>
+    <div class="t3" id="gendate"></div>
+  </div>
+  <div id="legend"></div>
+  <div id="hint">drag to rotate · scroll to zoom · click a star</div>
+  <div id="tip"></div>
+
+  <div id="panel">
+    <button class="close" id="panelClose" aria-label="Close">×</button>
+    <div class="pad">
+      <div class="modelchip"><span class="dot"></span><span class="mtxt"></span></div>
+      <div class="ptopic"></div>
+      <div class="pmeta"><span class="mentions"></span><span class="heatwrap"><span class="heatfill"></span></span></div>
+      <div class="psummary"></div>
+      <div class="divider">Posts</div>
+    </div>
+    <div class="posts"></div>
+  </div>
+</div>
+
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.166.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.0/examples/jsm/"
+} }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { Line2 } from 'three/addons/lines/Line2.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { LineGeometry } from 'three/addons/lines/LineGeometry.js';
+
+// ============================================================
+// data  (§7 — grok replaces this DATA object verbatim)
+// ============================================================
+const DATA = {
+  "generatedAt": "2026-07-03T19:15:00Z",
+  "source": "x.com",
+  "models": [
+    {
+      "id": "fable-5",
+      "name": "Fable 5",
+      "vendor": "Anthropic",
+      "color": "#E8865A",
+      "topics": [
+        {
+          "id": "fable-5-agentic-prompting",
+          "label": "Agentic prompting & subagents",
+          "summary": "Users share prompting techniques for Fable 5's autonomous capabilities: use /loop for multi-step work, memory files for learning, and spawning 50+ subagents rather than step-by-step commands.",
+          "volume": 2150,
+          "heat": 0.88,
+          "posts": [
+            {
+              "author": "@kirillk_web3",
+              "text": "🚨do you understand what Anthropic just dropped for Fable 5. the official guide to prompting the most powerful public model. > most people treat Fable 5 like a chatbot. that's the mistake. don't over-engineer prompts — it degrades output. use /loop for autonomous multi-step work. give it the goal, not step-by-step commands. add a memory file. it learns from past runs. spin up 50+ subagents at once. Fable 5 isn't an assistant. it's a consultant that leads the work.",
+              "url": "https://x.com/kirillk_web3/status/2072842256780825020",
+              "likes": 12,
+              "reposts": 2,
+              "postedAt": "2026-07-03T00:38:00Z"
+            },
+            {
+              "author": "@TheWhizzAI",
+              "text": "anthropic engineer: \"fable 5 is one of those models you’ll just remember - like Sonnet 3.5, Opus 4, Opus 4.5. we just removed 90% of Claude Code’s system prompt. in 20-minute session, an Anthropic core engineer reveals the capabilities of Fable 5.\"",
+              "url": "https://x.com/TheWhizzAI/status/2072625077246693466",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-07-02T10:15:00Z"
+            },
+            {
+              "author": "@IamJunaidIslam",
+              "text": "Fable 5 is Anthropic’s first Mythos-class model available to the public. The defining trait of Fable 5 isn’t benchmark performance. It’s endurance. Fable 5 can work autonomously for longer than any previous Claude model while maintaining coherence across hours-long tasks.",
+              "url": "https://x.com/IamJunaidIslam/status/2073096614424842265",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T17:28:43Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-safety-routing",
+          "label": "Safety routing to Opus 4.8",
+          "summary": "After community backlash, Fable 5 routes prompts about frontier LLM development transparently to Claude Opus 4.8. Classifier also flags more benign coding requests.",
+          "volume": 1340,
+          "heat": 0.72,
+          "posts": [
+            {
+              "author": "@testingcatalog",
+              "text": "Anthropic is making changes to the way how Fable 5 responds to prompts related to “frontier LLM development” after community backlash. These requests will be transparently routed to Claude Opus 4.8.",
+              "url": "https://x.com/testingcatalog/status/2065008942791471457",
+              "likes": 382,
+              "reposts": 14,
+              "postedAt": "2026-06-11T09:51:12Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "Anthropic shipped Fable 5 with safety classifiers, refusals, fallback handling. Some requests could be blocked or rerouted to another Claude model. Blocked Fable requests would be sent to Opus 4.8, and it acknowledged that the classifier could flag benign coding and debugging requests more often.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-export-suspension",
+          "label": "Export controls & suspension",
+          "summary": "US export-control directive caused global suspension of Fable 5 and Mythos 5 access in mid-June; restored July 1 with updated safeguards and routing.",
+          "volume": 1680,
+          "heat": 0.59,
+          "posts": [
+            {
+              "author": "@diamai_",
+              "text": "Jun 12: Fable 5 and Mythos 5 were suspended. The US government issued an export-control directive requiring Anthropic to suspend access to Fable 5 and Mythos 5 for foreign nationals. ... Jun 30: ... the export controls had been lifted and Fable 5 would return globally on July 1.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            },
+            {
+              "author": "@birdabo",
+              "text": "Anthropic is skipping Fable 5 and giving us Claude-Sonnet-5 instead. oh man, it doesn’t look good. we might be witnessing the down fall of Anthropic.",
+              "url": "https://x.com/birdabo/status/2068735577860804719",
+              "likes": 435,
+              "reposts": 14,
+              "postedAt": "2026-06-21T16:39:31Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-mythos-endurance",
+          "label": "Mythos-class long endurance",
+          "summary": "Positioned above standard models, Fable 5 focuses on persistent collaboration and sustained intelligence over hours rather than short benchmark bursts for messy real work.",
+          "volume": 920,
+          "heat": 0.81,
+          "posts": [
+            {
+              "author": "@IamJunaidIslam",
+              "text": "This isn’t just another model release. It’s a signal of where AI is heading next. A tier above Claude Opus. ... Real work is messy. ... The biggest bottleneck in AI hasn’t always been intelligence. It has been attention span. ... Fable 5 pushes AI closer to ... Persistent collaboration.",
+              "url": "https://x.com/IamJunaidIslam/status/2073096614424842265",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T17:28:43Z"
+            },
+            {
+              "author": "@kirillk_web3",
+              "text": "Fable 5 isn't an assistant. it's a consultant that leads the work. read it before you write another prompt. bookmark it. this changes everything.",
+              "url": "https://x.com/kirillk_web3/status/2072842256780825020",
+              "likes": 12,
+              "reposts": 2,
+              "postedAt": "2026-07-03T00:38:00Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-competitor-talk",
+          "label": "Comparisons & Sonnet 5 rumors",
+          "summary": "Mixed sentiment: some claim Anthropic is skipping Fable 5 for Sonnet 5; others compare directly to upcoming GPT-5.6 and debate the future of the lineup.",
+          "volume": 760,
+          "heat": 0.48,
+          "posts": [
+            {
+              "author": "@birdabo",
+              "text": "Anthropic is skipping Fable 5 and giving us Claude-Sonnet-5 instead. oh man, it doesn’t look good. we might be witnessing the down fall of Anthropic. OpenAI its your turn. Drop GPT-5.6 already.",
+              "url": "https://x.com/birdabo/status/2068735577860804719",
+              "likes": 435,
+              "reposts": 14,
+              "postedAt": "2026-06-21T16:39:31Z"
+            },
+            {
+              "author": "@SliceX75307",
+              "text": "When GPT 5.6 drops, and is on par with fable and is also included in subscription, people will switch to ChatGPT.",
+              "url": "https://x.com/SliceX75307/status/2073110713959387548",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:24:45Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opus-4-8",
+      "name": "Opus 4.8",
+      "vendor": "Anthropic",
+      "color": "#F2C14E",
+      "topics": [
+        {
+          "id": "opus-4-8-cad-engineering",
+          "label": "Mechanical CAD design strength",
+          "summary": "Opus 4.8 excels at mechanical CAD tasks, running Adam extensions in Onshape and Fusion 360. Users see it as a new frontier model for engineering workflows.",
+          "volume": 980,
+          "heat": 0.65,
+          "posts": [
+            {
+              "author": "@Oluwaphilemon1",
+              "text": "Anthropic claude Opus 4.8 is a new frontier model at mechanical CAD design. Adam extension run in both Onshape and Fusion! Imagine what Claude Fable 5 will do… GPT-5.6 can't keep up.",
+              "url": "https://x.com/Oluwaphilemon1/status/2072211416635900274",
+              "likes": 8,
+              "reposts": 2,
+              "postedAt": "2026-07-01T06:51:16Z"
+            },
+            {
+              "author": "@lemonDefi1",
+              "text": "Anthropic claude Opus 4.8 is a new frontier model at mechanical CAD design. Adam extension run in both Onshape and Fusion!",
+              "url": "https://x.com/lemonDefi1/status/2072211615286530285",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-07-01T06:52:03Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-fast-mode",
+          "label": "Fast Mode speed/cost gains",
+          "summary": "Launch adds Fast Mode running up to 2.5x faster at one-third the cost while giving users control over speed vs deeper thinking for coding and agentic work.",
+          "volume": 1120,
+          "heat": 0.58,
+          "posts": [
+            {
+              "author": "@StockSavvyShay",
+              "text": "Anthropic launched Claude Opus 4.8, upgrading its top model for coding, agentic workflows, reasoning and knowledge work. The update adds Fast Mode which runs up to 2.5x faster at one-third the cost while giving users more control over speed versus deeper thinking.",
+              "url": "https://x.com/StockSavvyShay/status/2060044349606703467",
+              "likes": 390,
+              "reposts": 38,
+              "postedAt": "2026-05-28T17:03:41Z"
+            },
+            {
+              "author": "@synthwavedd",
+              "text": "Claude Opus 4.8 is what Opus 4.7 should've been - it's a noticeable improvement, but not a big jump by any means.",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-agentic-reasoning",
+          "label": "Agentic & reasoning upgrades",
+          "summary": "Noticeable improvements in agentic workflows, reasoning and knowledge work. Users note it as what previous Opus should have been, with ongoing Mythos-related refinements.",
+          "volume": 1450,
+          "heat": 0.69,
+          "posts": [
+            {
+              "author": "@synthwavedd",
+              "text": "Claude Opus 4.8 is what Opus 4.7 should've been - it's a noticeable improvement, but not a big jump by any means. Anthropic have been sandbagging their models whilst work on the new Mythos safeguards was ongoing. This work is now coming to a close.",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            },
+            {
+              "author": "@arpit_bhayani",
+              "text": "Claude Opus 4.8 is out; time for the other Anthropic models to regress automagically.",
+              "url": "https://x.com/arpit_bhayani/status/2060210776477225056",
+              "likes": 640,
+              "reposts": 8,
+              "postedAt": "2026-05-29T04:05:00Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-mythos-safeguards",
+          "label": "Mythos safeguards development",
+          "summary": "Opus 4.8 development tied to Mythos safeguards work; improvements now surfacing as that effort closes, setting stage for stronger Fable-class releases.",
+          "volume": 620,
+          "heat": 0.41,
+          "posts": [
+            {
+              "author": "@synthwavedd",
+              "text": "Anthropic have been sandbagging their models whilst work on the new Mythos safeguards was ongoing. This work is now coming to a close. Exciting few weeks ahead!",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            },
+            {
+              "author": "@StockSavvyShay",
+              "text": "Anthropic launched Claude Opus 4.8, upgrading its top model for coding, agentic workflows, reasoning and knowledge work.",
+              "url": "https://x.com/StockSavvyShay/status/2060044349606703467",
+              "likes": 390,
+              "reposts": 38,
+              "postedAt": "2026-05-28T17:03:41Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-fallback-role",
+          "label": "Fallback for Fable 5 sensitive tasks",
+          "summary": "Opus 4.8 serves as the safe fallback when Fable 5's classifiers block or reroute frontier and certain coding prompts due to new safety layers.",
+          "volume": 540,
+          "heat": 0.67,
+          "posts": [
+            {
+              "author": "@testingcatalog",
+              "text": "These requests will be transparently routed to Claude Opus 4.8.",
+              "url": "https://x.com/testingcatalog/status/2065008942791471457",
+              "likes": 382,
+              "reposts": 14,
+              "postedAt": "2026-06-11T09:51:12Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "Blocked Fable requests would be sent to Opus 4.8, and it acknowledged that the classifier could flag benign coding and debugging requests more often.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gpt-5-6",
+      "name": "GPT-5.6",
+      "vendor": "OpenAI",
+      "color": "#5CD6B9",
+      "topics": [
+        {
+          "id": "gpt-5-6-release-leaks",
+          "label": "Release timing & leaks",
+          "summary": "Heavy leaks and rumors of June 23 drop or imminent preview. OpenAI positioning GPT-5.6 series against Anthropic while navigating government approval for release.",
+          "volume": 2450,
+          "heat": 0.93,
+          "posts": [
+            {
+              "author": "@mark_k",
+              "text": "GPT-5.6 (OpenAI): Heavy leaks point to a possible June 23 drop (or very soon after). Rumored features: 1.5M token context, major gains in long-horizon coding & agentic workflows, faster Codex responses, and aggressive pricing to undercut Anthropic.",
+              "url": "https://x.com/mark_k/status/2069169916432003105",
+              "likes": 1102,
+              "reposts": 27,
+              "postedAt": "2026-06-22T21:25:26Z"
+            },
+            {
+              "author": "@Amank1412",
+              "text": "Another GPT-5.6 leak. Rumors say OpenAI could drop GPT-5.6 on June 23. > Its 3× cheaper than Fable > Up to 1.5M token context > Stronger agentic coding workflows > Direct competition with Claude style systems",
+              "url": "https://x.com/Amank1412/status/2066104778162348132",
+              "likes": 728,
+              "reposts": 53,
+              "postedAt": "2026-06-14T10:25:40Z"
+            },
+            {
+              "author": "@KaiXCreator",
+              "text": "Another GPT-5.6 leak. Rumors say OpenAI could drop GPT-5.6 on June 23. • Its ~3× cheaper than Fable • Up to 1.5M token context • Stronger agentic coding workflows • Direct competition with Claude-style systems",
+              "url": "https://x.com/KaiXCreator/status/2066070890794962949",
+              "likes": 848,
+              "reposts": 74,
+              "postedAt": "2026-06-14T08:11:00Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-tiered-family",
+          "label": "Sol / Terra / Luna tiers",
+          "summary": "OpenAI previewed GPT-5.6 as three models: Sol (most powerful, >Mythos), Terra (on par with Fable 5), Luna (fast low-cost). All optimized for long agentic workflows.",
+          "volume": 1890,
+          "heat": 0.84,
+          "posts": [
+            {
+              "author": "@UnDrogado_poeta",
+              "text": "OpenAI announced its Mythos > GPT5.6. Altman responded with three models at once... Sol > more powerful than Mythos. Terra > on par with Fable 5. All are optimized for agentic workflows lasting dozens of hours (!) without human intervention. GPT-5.6 will be released in the coming weeks.",
+              "url": "https://x.com/UnDrogado_poeta/status/2071210520045060327",
+              "likes": 43,
+              "reposts": 0,
+              "postedAt": "2026-06-28T12:34:03Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "OpenAI introduced the GPT-5.6 series on Jun 26: Sol as the flagship model, Terra as the balanced model, and Luna as the fast low-cost model. ... Sol was the flagship model, Terra the balanced model and Luna the low-cost model.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-context-agentic",
+          "label": "1.5M context & agentic coding",
+          "summary": "Rumored 1.5 million token context, major gains in long-horizon coding and agentic workflows, plus faster Codex. Early tests show strength in complex 3D and code production.",
+          "volume": 1560,
+          "heat": 0.76,
+          "posts": [
+            {
+              "author": "@mark_k",
+              "text": "Rumored features: 1.5M token context, major gains in long-horizon coding & agentic workflows, faster Codex responses, and aggressive pricing to undercut Anthropic. Early user tests (shared on X) show GPT-5.6 Pro already impressive in 3D modeling/Blender and producing more code than Fable in some cases.",
+              "url": "https://x.com/mark_k/status/2069169916432003105",
+              "likes": 1102,
+              "reposts": 27,
+              "postedAt": "2026-06-22T21:25:26Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "GPT-5.6 also introduced max reasoning effort and an ultra mode that uses subagents for complex work. ... improved agentic capability in coding, biology and cybersecurity.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-limited-preview",
+          "label": "Limited preview & gov oversight",
+          "summary": "GPT-5.6 Sol released as limited preview for trusted partners per government request, with heavy red-teaming and cyber-safety measures attached before broader rollout.",
+          "volume": 1320,
+          "heat": 0.71,
+          "posts": [
+            {
+              "author": "@diamai_",
+              "text": "OpenAI said it had shared plans and model capabilities with the US government, and that at the government's request it was starting with a limited preview for a small group of trusted partners before broader release. ... Sol put OpenAI in the same June pattern as Anthropic.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            },
+            {
+              "author": "@AndrewCurran_",
+              "text": "They may already have been/are blocked, we have no way of knowing. OpenAI has been trying to get GPT-5.6 approved for release since before Fable was banned for example.",
+              "url": "https://x.com/AndrewCurran_/status/2073110159367590377",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:22:33Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-pricing-competition",
+          "label": "Aggressive pricing vs Fable",
+          "summary": "Positioned as ~3x cheaper than Fable with competitive or superior agentic capabilities. Users speculate on subscription impact and switching pressure between platforms.",
+          "volume": 870,
+          "heat": 0.55,
+          "posts": [
+            {
+              "author": "@Amank1412",
+              "text": "Its 3× cheaper than Fable. ... Will GPT-5.6 cook Fable? Lets discuss in comments.",
+              "url": "https://x.com/Amank1412/status/2066104778162348132",
+              "likes": 728,
+              "reposts": 53,
+              "postedAt": "2026-06-14T10:25:40Z"
+            },
+            {
+              "author": "@SliceX75307",
+              "text": "When GPT 5.6 drops, and is on par with fable and is also included in subscription, people will switch to ChatGPT. The incentive/pressure to switch will only grow with more GPT releases (5.7, 6).",
+              "url": "https://x.com/SliceX75307/status/2073110713959387548",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:24:45Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gemini-3",
+      "name": "Gemini 3",
+      "vendor": "Google",
+      "color": "#8B7CF6",
+      "topics": [
+        {
+          "id": "gemini-3-image-releases",
+          "label": "New image models rollout",
+          "summary": "Google released Gemini 3.1 Flash Image for high-volume cheap generation and Gemini 3 Pro Image for quality creative work, filling gaps while flagship Pro slips.",
+          "volume": 780,
+          "heat": 0.52,
+          "posts": [
+            {
+              "author": "@aiseomastery",
+              "text": "Google released two new image models this week, Gemini 3.1 Flash Image for cheap high volume generation and Gemini 3 Pro Image for quality first creative work. Meanwhile Gemini 3.5 Pro slipped again, now expected sometime in July.",
+              "url": "https://x.com/aiseomastery/status/2072458418951188735",
+              "likes": 1,
+              "reposts": 0,
+              "postedAt": "2026-07-01T23:12:46Z"
+            },
+            {
+              "author": "@JulianGoldieSEO",
+              "text": "Google held back their best AI on purpose. And the one they shipped for free is already breaking benchmarks.",
+              "url": "https://x.com/JulianGoldieSEO/status/2070946152527343689",
+              "likes": 3,
+              "reposts": 0,
+              "postedAt": "2026-06-27T19:03:33Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-pro-delays",
+          "label": "3.5 Pro delays & testing",
+          "summary": "Gemini 3.5 Pro repeatedly slips; currently testing on arena as Gemini 3.1 Pro with updated March 2026 knowledge cutoff. Users track hidden variants and benchmark progress.",
+          "volume": 1250,
+          "heat": 0.64,
+          "posts": [
+            {
+              "author": "@Waguri_Kaoruko8",
+              "text": "🚨Gemini 3.5 pro got its knowledge cutoff bumped to March 2026 and is now testing on https://arena.ai/ as Gemini 3.1 pro. Currently there are two models hiding under Gemini 3.1 pro on arena - the unannounced gemini 3.5 pro and the February gemini 3.1 pro",
+              "url": "https://x.com/Waguri_Kaoruko8/status/2069239435003097586",
+              "likes": 349,
+              "reposts": 15,
+              "postedAt": "2026-06-23T02:01:40Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High. two new Gemini models testing in Arena under the name 3.1 pro, 3.5 flash and 3 flash",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-benchmarks-comeback",
+          "label": "Benchmark & creative comeback",
+          "summary": "Gemini 3.5 Pro showing strong frontend code outputs and creative confidence. Leaked high benchmarks for 3.1 Pro including SWE-Bench and AIME; positioned as comeback vs Fable and others.",
+          "volume": 910,
+          "heat": 0.59,
+          "posts": [
+            {
+              "author": "@ggg78g89",
+              "text": "Gemini 3.5 Pro is the comeback model Google needed. Just look at these frontend outputs: clean taste, sharp layouts, smooth polish, and real creative confidence. This time Google is coming back hard. Fable 5, GLM-5.2, and Kimi K2.7 are getting outpaced.",
+              "url": "https://x.com/ggg78g89/status/2072587420143628797",
+              "likes": 54,
+              "reposts": 1,
+              "postedAt": "2026-07-02T07:45:22Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High.",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-flash-performance",
+          "label": "Flash tier strong performance",
+          "summary": "Free Gemini 3.5 Flash already breaking benchmarks (76%+ Terminal-Bench) and running 4x faster than comparable frontier models. Seen as warm-up for stronger Pro versions.",
+          "volume": 670,
+          "heat": 0.47,
+          "posts": [
+            {
+              "author": "@JulianGoldieSEO",
+              "text": "The free version — Gemini 3.5 Flash — scores 76.2% on Terminal-Bench 2.1 and 83.6% on MCP Atlas. It runs 4x faster than comparable frontier models at the same capability level. And Google called it the warm-up.",
+              "url": "https://x.com/JulianGoldieSEO/status/2070946152527343689",
+              "likes": 3,
+              "reposts": 0,
+              "postedAt": "2026-06-27T19:03:33Z"
+            },
+            {
+              "author": "@aiseomastery",
+              "text": "Google released two new image models this week, Gemini 3.1 Flash Image for cheap high volume generation and Gemini 3 Pro Image for quality first creative work.",
+              "url": "https://x.com/aiseomastery/status/2072458418951188735",
+              "likes": 1,
+              "reposts": 0,
+              "postedAt": "2026-07-01T23:12:46Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-official-excitement",
+          "label": "Official Gemini 3 excitement",
+          "summary": "Google DeepMind leads celebrate Gemini 3 release for broad product experiences in Gemini App, Search, AI Studio and Vertex AI with strong benchmark results across domains.",
+          "volume": 1520,
+          "heat": 0.38,
+          "posts": [
+            {
+              "author": "@JeffDean",
+              "text": "I’m really excited about our release of Gemini 3 today, the result of hard work by many, many people in the Gemini team and all across Google! We’ve built many exciting new product experiences with it... The model performs quite well on a wide range of benchmarks.",
+              "url": "https://x.com/JeffDean/status/1990815514520961199",
+              "likes": 3426,
+              "reposts": 339,
+              "postedAt": "2025-11-18T16:13:00Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High.",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "glm-5-2",
+      "name": "GLM 5.2",
+      "vendor": "Zhipu",
+      "color": "#4E9CFF",
+      "topics": [
+        {
+          "id": "glm-5-2-open-weight",
+          "label": "Open-weight flagship release",
+          "summary": "Zhipu released GLM-5.2 as 744B parameter open-weight model with 1M token context, available via chat.z.ai and increasingly through HF inference providers.",
+          "volume": 1380,
+          "heat": 0.61,
+          "posts": [
+            {
+              "author": "@mztacat",
+              "text": "Testing the GLM 5.2 by Zhipu AI. GLM-5.2 is an open-weight large language model... Total parameter: 744B Context window: 1M token... Benchmarks almost on par with Claude 4.8 Opus, GPT-5.5, and Gemini 3.1 Pro. Can be run fully locally via llama.cpp and Unsloth docs.",
+              "url": "https://x.com/mztacat/status/2068637916545347670",
+              "likes": 259,
+              "reposts": 14,
+              "postedAt": "2026-06-21T10:11:27Z"
+            },
+            {
+              "author": "@gudanglifehack",
+              "text": "Zhipu AI releases GLM-5.2 open-weight AI model matching leading models in coding, agentic tasks, and security bug detection. ... 750B parameter open-weight model with 1M-token context, excelling in coding (62.1 on SWE-bench Pro), terminal work (81.0 on Terminal-bench 2.1)...",
+              "url": "https://x.com/gudanglifehack/status/2071128101057347844",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-06-28T07:06:33Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-benchmark-parity",
+          "label": "Near-frontier coding & agentic",
+          "summary": "GLM-5.2 achieves coding and agentic performance within a percentage point of Opus 4.8 / Mythos on key benchmarks at a fraction of the cost. Strong in SWE-Bench, terminal, tool use and security.",
+          "volume": 1120,
+          "heat": 0.73,
+          "posts": [
+            {
+              "author": "@gudanglifehack",
+              "text": "Zhipu AI released GLM-5.2, a 750B parameter open-weight model with 1M-token context, excelling in coding (62.1 on SWE-bench Pro), terminal work (81.0 on Terminal-bench 2.1), tool use, agentic tasks, and security bug detection comparable to Anthropic's Claude Mythos.",
+              "url": "https://x.com/gudanglifehack/status/2071128101057347844",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-06-28T07:06:33Z"
+            },
+            {
+              "author": "@kypwny",
+              "text": "GLM-5.2 is Zhipu's model, it has already been out, it does not match Mythos. It is barely on par with Opus 4.5/4.6 or GPT-5.5 in my real world use cases. Super cheap tho.",
+              "url": "https://x.com/kypwny/status/2071168627928383868",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-06-28T09:47:36Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-local-quant",
+          "label": "Local run & quantization",
+          "summary": "Massive model requires heavy quantization (Unsloth GGUF) for local use on high-RAM Macs or servers. 1-bit quant still hundreds of GB; not consumer but viable on serious hardware.",
+          "volume": 690,
+          "heat": 0.29,
+          "posts": [
+            {
+              "author": "@mztacat",
+              "text": "Unsloth compressed it dramatically using their Dynamic GGUF technology. 8-bit Quantization takes upto 800GB ... 1-bit takes 217GB... Even the smallest 1-bit quant needs 217GB of disk and 223GB RAM, which is not consumer-grade hardware. You need a 256GB unified memory Mac (M3/M4 Ultra) or serious server RAM.",
+              "url": "https://x.com/mztacat/status/2068637916545347670",
+              "likes": 259,
+              "reposts": 14,
+              "postedAt": "2026-06-21T10:11:27Z"
+            },
+            {
+              "author": "@bridgemindai",
+              "text": "GLM 5 just dropped and nobody is talking about it. Zhipu quietly released their new flagship model on https://chat.z.ai/ Chat, coding, and agentic tasks.",
+              "url": "https://x.com/bridgemindai/status/2021586514484867336",
+              "likes": 262,
+              "reposts": 7,
+              "postedAt": "2026-02-11T14:05:58Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-cost-advantage",
+          "label": "Dramatically lower cost",
+          "summary": "Priced at roughly 1/5th the cost of frontier closed models while delivering near-parity on agentic and coding tasks. Quiet release strategy contrasted with US lab drama.",
+          "volume": 850,
+          "heat": 0.54,
+          "posts": [
+            {
+              "author": "@MikeJosephAZ",
+              "text": "Zhipu's GLM 5.2 AI model released. The Chinese AI startup's new open source model has blown past every other open release and now sits within a percentage point of Anthropic's Opus 4.8 on one closely watched agentic benchmark, at roughly a fifth of the cost.",
+              "url": "https://x.com/MikeJosephAZ/status/2070933933869670890",
+              "likes": 0,
+              "reposts": 1,
+              "postedAt": "2026-06-27T18:15:00Z"
+            },
+            {
+              "author": "@kypwny",
+              "text": "GLM-5.2 is Zhipu's model... Super cheap tho.",
+              "url": "https://x.com/kypwny/status/2071168627928383868",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-06-28T09:47:36Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-workflow-adoption",
+          "label": "Adoption in dev workflows",
+          "summary": "Open models like GLM-5.2 increasingly plugged into real tools: selectable in Claude Code via Hugging Face providers; praised in combos with other open models for agentic setups.",
+          "volume": 540,
+          "heat": 0.66,
+          "posts": [
+            {
+              "author": "@_akhaliq",
+              "text": "I use glm 5.2 in claude code via hf claude almost daily now. moved over completely to open models",
+              "url": "https://x.com/_akhaliq/status/2073109439083585817",
+              "likes": 5,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:19:41Z"
+            },
+            {
+              "author": "@Miss_Baphy",
+              "text": "@NousResearch Hermes + @Zai_org GLM-5.2 Is the winning combination of any AI setup I've ever used. The powercouple of the Agentic AI world we didn't see coming.",
+              "url": "https://x.com/Miss_Baphy/status/2073110864366862336",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:25:21Z"
+            },
+            {
+              "author": "@imnotchalk",
+              "text": "GLM-5.2 is even better than gemini",
+              "url": "https://x.com/imnotchalk/status/2073109590783484223",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:20:17Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+const MODEL_ORDER = ['fable-5', 'gpt-5-6', 'opus-4-8', 'gemini-3', 'glm-5-2'];
+
+// ============================================================
+// utils
+// ============================================================
+function fnv1a(str) {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return h >>> 0;
+}
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function easeInOutCubic(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+function lerpV3(a, b, t, out) {
+  out.x = a.x + (b.x - a.x) * t;
+  out.y = a.y + (b.y - a.y) * t;
+  out.z = a.z + (b.z - a.z) * t;
+  return out;
+}
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+function mapLinear(x, a1, a2, b1, b2) { return b1 + (b2 - b1) * (x - a1) / (a2 - a1); }
+function fmt(n) { return n.toLocaleString('en-US'); }
+function fmtK(n) {
+  if (n >= 1000) return (n / 1000).toFixed(n >= 10000 ? 0 : 1).replace(/\.0$/, '') + 'k';
+  return String(n);
+}
+function spherical(r, latDeg, lonDeg) {
+  const lat = latDeg * Math.PI / 180, lon = lonDeg * Math.PI / 180;
+  return new THREE.Vector3(
+    r * Math.cos(lat) * Math.cos(lon),
+    r * Math.sin(lat),
+    r * Math.cos(lat) * Math.sin(lon)
+  );
+}
+function defaultCameraPosition() {
+  return window.innerWidth <= 640 ? new THREE.Vector3(0, 82, 520) : new THREE.Vector3(0, 60, 330);
+}
+
+// ============================================================
+// textures
+// ============================================================
+function createStarTexture() {
+  const s = 256, c = document.createElement('canvas'); c.width = c.height = s;
+  const g = c.getContext('2d'), cx = s / 2, cy = s / 2, R = s / 2;
+  const grad = g.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grad.addColorStop(0.00, 'rgba(255,255,255,1)');
+  grad.addColorStop(0.08, 'rgba(255,255,255,0.98)');
+  grad.addColorStop(0.30, 'rgba(255,255,255,0.55)');
+  // exponential-ish falloff to transparent
+  for (let i = 1; i <= 8; i++) {
+    const t = 0.30 + (0.70 * i / 8);
+    const a = Math.pow(1 - (i / 8), 2.5) * 0.55;
+    grad.addColorStop(Math.min(t, 1), `rgba(255,255,255,${a.toFixed(3)})`);
+  }
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grad; g.fillRect(0, 0, s, s);
+  // 4 diffraction spikes (H + V)
+  const len = R * 0.9;
+  g.save(); g.translate(cx, cy); g.globalCompositeOperation = 'lighter';
+  for (let k = 0; k < 2; k++) {
+    g.rotate(Math.PI / 2 * k);
+    const lg = g.createLinearGradient(0, 0, len, 0);
+    lg.addColorStop(0, 'rgba(255,255,255,0.35)');
+    lg.addColorStop(1, 'rgba(255,255,255,0)');
+    g.strokeStyle = lg; g.lineWidth = 2;
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(len, 0); g.stroke();
+    g.beginPath(); g.moveTo(0, 0); g.lineTo(-len, 0); g.stroke();
+  }
+  g.restore();
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+function createHaloTexture() {
+  const s = 256, c = document.createElement('canvas'); c.width = c.height = s;
+  const g = c.getContext('2d'), cx = s / 2, cy = s / 2, R = s / 2;
+  const grad = g.createRadialGradient(cx, cy, 0, cx, cy, R);
+  grad.addColorStop(0, 'rgba(255,255,255,0.9)');
+  for (let i = 1; i <= 10; i++) {
+    const t = i / 10, a = Math.pow(1 - t, 3.5) * 0.9;
+    grad.addColorStop(t, `rgba(255,255,255,${a.toFixed(3)})`);
+  }
+  grad.addColorStop(1, 'rgba(255,255,255,0)');
+  g.fillStyle = grad; g.fillRect(0, 0, s, s);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+function createRingTexture() {
+  const s = 256, c = document.createElement('canvas'); c.width = c.height = s;
+  const g = c.getContext('2d'), cx = s / 2, cy = s / 2;
+  g.strokeStyle = 'rgba(255,255,255,1)'; g.lineWidth = 5;
+  g.beginPath(); g.arc(cx, cy, s / 2 - 12, 0, Math.PI * 2); g.stroke();
+  // small tick marks
+  g.lineWidth = 3;
+  for (let i = 0; i < 4; i++) {
+    const a = i * Math.PI / 2 + Math.PI / 4;
+    const r1 = s / 2 - 24, r2 = s / 2 - 4;
+    g.beginPath();
+    g.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1);
+    g.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2);
+    g.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+function createLabelTexture(name, vendor, color) {
+  const w = 512, h = 128, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  g.textAlign = 'center';
+  g.font = '700 44px Inter, "Helvetica Neue", system-ui, sans-serif';
+  g.fillStyle = '#ffffff';
+  g.fillText(name, w / 2, 54);
+  g.font = '400 22px Inter, "Helvetica Neue", system-ui, sans-serif';
+  g.fillStyle = 'rgba(255,255,255,0.55)';
+  g.fillText(vendor.toUpperCase(), w / 2, 86);
+  // underline bar in model color, width of name text
+  g.font = '700 44px Inter, "Helvetica Neue", system-ui, sans-serif';
+  const tw = g.measureText(name).width;
+  g.fillStyle = color;
+  g.fillRect(w / 2 - tw / 2, 100, tw, 4);
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; return tex;
+}
+
+// ============================================================
+// three.js globals
+// ============================================================
+let renderer, composer, bloomPass, scene, camera, controls;
+let raycaster, pointer = new THREE.Vector2();
+const starTex = createStarTexture();
+const haloTex = createHaloTexture();
+const ringTex = createRingTexture();
+
+const interactive = [];          // star + label sprites for raycast
+const allStars = [];             // { sprite, halo, topic, model, baseScale, phase }
+const clusters = new Map();      // modelId -> { center, group, lines, label, model, starsData[] }
+let selectionRing = null;
+let bgStars = null;
+let selected = null;             // current star entry
+let hovered = null;
+let dimmedModel = null;          // model id currently soloed (others dimmed) or null
+
+let lastInteraction = -1e9;
+let curAutoRotateSpeed = 0.35;
+const TARGET_AUTOROTATE = 0.35;
+let panelOpen = false;
+let camTween = null;
+
+const canvas = document.getElementById('scene');
+const tipEl = document.getElementById('tip');
+const hintEl = document.getElementById('hint');
+const panelEl = document.getElementById('panel');
+
+// ============================================================
+// layout
+// ============================================================
+function layoutClusters(models) {
+  const R = 150, map = new Map();
+  // place by MODEL_ORDER around the ring; assign to models by id
+  MODEL_ORDER.forEach((id, i) => {
+    const lon = i * 72 + 20;
+    const lat = (i % 2 === 0) ? 18 : -22;
+    map.set(id, { center: spherical(R, lat, lon) });
+  });
+  return map;
+}
+
+function layoutTopics(model, center) {
+  const topics = model.topics.slice().sort((a, b) => b.volume - a.volume);
+  const n = topics.length;
+  // global volume range for log size mapping
+  const placed = [];
+  const seed = fnv1a(model.id);
+  const rnd = mulberry32(seed);
+  for (let rank = 0; rank < n; rank++) {
+    const topic = topics[rank];
+    const w = 1 - rank / Math.max(1, n - 1);       // 1 biggest .. 0 smallest
+    const rTarget = 8 + Math.pow(1 - w, 0.75) * 34;
+    const scale = volumeToScale(topic.volume);
+    let pos = null;
+    for (let attempt = 0; attempt < 40; attempt++) {
+      // seeded random unit vector, flattened into an ellipsoid
+      let dir = new THREE.Vector3(rnd() * 2 - 1, (rnd() * 2 - 1), rnd() * 2 - 1);
+      if (dir.lengthSq() < 1e-4) dir.set(1, 0, 0);
+      dir.normalize();
+      dir.y *= 0.55;
+      dir.normalize();
+      const jitter = rTarget * (0.85 + rnd() * 0.3);
+      const cand = center.clone().add(dir.multiplyScalar(jitter));
+      let ok = true;
+      for (const p of placed) {
+        const minD = (p.scale + scale) * 0.9 + 6;
+        if (cand.distanceTo(p.pos) < minD) { ok = false; break; }
+      }
+      if (ok || attempt === 39) { pos = cand; break; }
+    }
+    placed.push({ topic, pos, scale });
+  }
+  return placed;
+}
+
+let VMIN = 1, VMAX = 1;
+function computeVolumeRange() {
+  let mn = Infinity, mx = -Infinity;
+  for (const m of DATA.models) for (const t of m.topics) { mn = Math.min(mn, t.volume); mx = Math.max(mx, t.volume); }
+  VMIN = mn; VMAX = mx;
+}
+function volumeToScale(v) {
+  const lo = Math.log(VMIN), hi = Math.log(VMAX);
+  const t = hi > lo ? (Math.log(v) - lo) / (hi - lo) : 0.5;
+  return 7 + t * 17;   // 7 .. 24
+}
+
+// Prim's MST over an array of Vector3 -> list of [i,j] edges
+function computeMST(points) {
+  const n = points.length;
+  if (n < 2) return [];
+  const inTree = new Array(n).fill(false);
+  const dist = new Array(n).fill(Infinity);
+  const parent = new Array(n).fill(-1);
+  dist[0] = 0;
+  const edges = [];
+  for (let it = 0; it < n; it++) {
+    let u = -1, best = Infinity;
+    for (let i = 0; i < n; i++) if (!inTree[i] && dist[i] < best) { best = dist[i]; u = i; }
+    if (u === -1) break;
+    inTree[u] = true;
+    if (parent[u] !== -1) edges.push([parent[u], u]);
+    for (let v = 0; v < n; v++) {
+      if (!inTree[v]) {
+        const d = points[u].distanceToSquared(points[v]);
+        if (d < dist[v]) { dist[v] = d; parent[v] = u; }
+      }
+    }
+  }
+  return edges;
+}
+
+// ============================================================
+// scene build
+// ============================================================
+function initRenderer() {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x05070D, 1);
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.Fog(0x05070D, 500, 1100);
+
+  camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 3000);
+  camera.position.copy(defaultCameraPosition());
+  camera.lookAt(0, 0, 0);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.rotateSpeed = 0.55;
+  controls.zoomSpeed = 0.9;
+  controls.minDistance = window.innerWidth <= 640 ? 180 : 120;
+  controls.maxDistance = window.innerWidth <= 640 ? 760 : 620;
+  controls.enablePan = false;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = TARGET_AUTOROTATE;
+
+  raycaster = new THREE.Raycaster();
+
+  composer = new EffectComposer(renderer);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  composer.setSize(window.innerWidth, window.innerHeight);
+  composer.addPass(new RenderPass(scene, camera));
+  bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.55, 0.6, 0.72);
+  composer.addPass(bloomPass);
+
+  window.addEventListener('resize', onResize);
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  controls.minDistance = window.innerWidth <= 640 ? 180 : 120;
+  controls.maxDistance = window.innerWidth <= 640 ? 760 : 620;
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  composer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  composer.setSize(window.innerWidth, window.innerHeight);
+  if (bloomPass) bloomPass.setSize(window.innerWidth, window.innerHeight);
+  for (const [, c] of clusters) {
+    for (const line of c.lineObjects || []) {
+      if (line.material && line.material.resolution) {
+        line.material.resolution.set(window.innerWidth, window.innerHeight);
+      }
+    }
+  }
+}
+
+function buildSky() {
+  // 1. nebula gradient dome
+  const domeGeo = new THREE.SphereGeometry(1200, 32, 32);
+  const domeMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: {},
+    vertexShader: `
+      varying vec3 vDir;
+      void main() {
+        vDir = normalize(position);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }`,
+    fragmentShader: `
+      varying vec3 vDir;
+      vec3 s2l(vec3 c){
+        return pow((c + vec3(0.055)) / 1.055, vec3(2.4));
+      }
+      vec3 col(float t){
+        vec3 bottom = s2l(vec3(0.039,0.055,0.118)); // #0A0E1E
+        vec3 mid    = s2l(vec3(0.020,0.027,0.051)); // #05070D
+        vec3 top    = s2l(vec3(0.043,0.039,0.094)); // #0B0A18
+        if(t < 0.5) return mix(bottom, mid, t*2.0);
+        return mix(mid, top, (t-0.5)*2.0);
+      }
+      void main(){
+        float t = clamp(vDir.y*0.5+0.5, 0.0, 1.0);
+        vec3 c = col(t);
+        // two faint radial blooms
+        float vio = max(0.0, dot(vDir, normalize(vec3(0.3,0.9,0.2))));
+        c += s2l(vec3(0.102,0.078,0.251)) * pow(vio,4.0) * 0.06; // violet #1A1440
+        float teal = max(0.0, dot(vDir, normalize(vec3(-0.3,-0.9,-0.2))));
+        c += s2l(vec3(0.055,0.165,0.200)) * pow(teal,4.0) * 0.04; // teal #0E2A33
+        gl_FragColor = vec4(c, 1.0);
+      }`
+  });
+  const dome = new THREE.Mesh(domeGeo, domeMat);
+  dome.raycast = () => {};
+  scene.add(dome);
+
+  // 3. background starfield
+  const N = 2600;
+  const pos = new Float32Array(N * 3);
+  const col = new Float32Array(N * 3);
+  const siz = new Float32Array(N);
+  const rndBg = mulberry32(0xBADCAFE);
+  for (let i = 0; i < N; i++) {
+    // uniform on shell radius 700..1000
+    let x = rndBg() * 2 - 1, y = rndBg() * 2 - 1, z = rndBg() * 2 - 1;
+    const l = Math.hypot(x, y, z) || 1; x /= l; y /= l; z /= l;
+    const r = 700 + rndBg() * 300;
+    pos[i * 3] = x * r; pos[i * 3 + 1] = y * r; pos[i * 3 + 2] = z * r;
+    // white with slight warm/blue tint
+    const tint = rndBg();
+    const warm = tint > 0.5;
+    col[i * 3] = warm ? 1.0 : 0.92;
+    col[i * 3 + 1] = 0.95 + rndBg() * 0.05;
+    col[i * 3 + 2] = warm ? 0.92 : 1.0;
+    siz[i] = 0.6 + rndBg() * 1.2;
+  }
+  const bgGeo = new THREE.BufferGeometry();
+  bgGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+  bgGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  bgGeo.setAttribute('size', new THREE.BufferAttribute(siz, 1));
+  const bgMat = new THREE.PointsMaterial({
+    size: 1.4, vertexColors: true, transparent: true, opacity: 0.7,
+    sizeAttenuation: true, blending: THREE.AdditiveBlending, depthWrite: false,
+    map: haloTex, fog: false
+  });
+  bgStars = new THREE.Points(bgGeo, bgMat);
+  bgStars.raycast = () => {};
+  scene.add(bgStars);
+}
+
+function buildConstellations() {
+  const clusterMap = layoutClusters(DATA.models);
+
+  for (const model of DATA.models) {
+    const modelIndex = MODEL_ORDER.indexOf(model.id);
+    const introDelay = Math.max(0, modelIndex) * 0.1;
+    const center = clusterMap.get(model.id).center;
+    const placed = layoutTopics(model, center);
+    const color = new THREE.Color(model.color);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const starMat = () => new THREE.SpriteMaterial({
+      map: starTex, color: color.clone(), blending: THREE.AdditiveBlending,
+      depthWrite: false, transparent: true, fog: false
+    });
+    const haloMatProto = new THREE.SpriteMaterial({
+      map: haloTex, color: color.clone(), blending: THREE.AdditiveBlending,
+      depthWrite: false, transparent: true, fog: false
+    });
+
+    const starEntries = [];
+    for (const p of placed) {
+      const { topic, pos, scale } = p;
+      const phase = (fnv1a(topic.id) % 10000) / 10000 * Math.PI * 2;
+
+      // halo (behind)
+      const halo = new THREE.Sprite(haloMatProto.clone());
+      const haloBase = (0.22 + 0.5 * topic.heat) * 0.6;
+      halo.position.copy(pos);
+      halo.scale.setScalar(scale * 0.2);
+      halo.material.opacity = 0;
+      halo.renderOrder = 1;
+      halo.raycast = () => {};
+      group.add(halo);
+
+      // star sprite
+      const sprite = new THREE.Sprite(starMat());
+      sprite.position.copy(pos);
+      sprite.scale.setScalar(scale * 0.2);
+      sprite.material.opacity = 0;
+      sprite.renderOrder = 2;
+      const entry = { sprite, halo, topic, model, baseScale: scale, phase, haloBase, hoverBoost: 1, hoverTarget: 1, introDelay };
+      sprite.userData = entry;
+      halo.userData.haloBase = haloBase;
+      group.add(sprite);
+
+      interactive.push(sprite);
+      allStars.push(entry);
+      starEntries.push({ ...entry, pos });
+    }
+
+    // MST lines
+    const pts = starEntries.map(e => e.pos);
+    const edges = computeMST(pts);
+    const linePos = [];
+    for (const [i, j] of edges) {
+      const a = starEntries[i], b = starEntries[j];
+      const dirAB = b.pos.clone().sub(a.pos).normalize();
+      const a2 = a.pos.clone().add(dirAB.clone().multiplyScalar(a.baseScale * 0.55));
+      const b2 = b.pos.clone().add(dirAB.clone().multiplyScalar(-b.baseScale * 0.55));
+      linePos.push(a2.x, a2.y, a2.z, b2.x, b2.y, b2.z);
+    }
+    const lineGeo = new LineGeometry();
+    lineGeo.setPositions(linePos);
+    const lineMat = new LineMaterial({
+      color: color.getHex(), transparent: true, opacity: 0,
+      linewidth: 1.6, blending: THREE.AdditiveBlending, depthWrite: false,
+      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight)
+    });
+    const lines = new Line2(lineGeo, lineMat);
+    lines.computeLineDistances();
+    lines.renderOrder = 0;
+    group.add(lines);
+
+    const glowGeo = new LineGeometry();
+    glowGeo.setPositions(linePos);
+    const glowMat = new LineMaterial({
+      color: color.getHex(), transparent: true, opacity: 0,
+      linewidth: 4.4, blending: THREE.AdditiveBlending, depthWrite: false,
+      resolution: new THREE.Vector2(window.innerWidth, window.innerHeight)
+    });
+    const lineGlow = new Line2(glowGeo, glowMat);
+    lineGlow.computeLineDistances();
+    lineGlow.renderOrder = -1;
+    group.add(lineGlow);
+
+    // cluster label
+    let clusterRadius = 0;
+    let labelY = -Infinity;
+    for (const e of starEntries) {
+      clusterRadius = Math.max(clusterRadius, center.distanceTo(e.pos) + e.baseScale);
+      labelY = Math.max(labelY, e.pos.y + e.baseScale);
+    }
+    const labelTex = createLabelTexture(model.name, model.vendor, model.color);
+    const labelMat = new THREE.SpriteMaterial({ map: labelTex, depthWrite: false, transparent: true, fog: false, opacity: 0 });
+    const label = new THREE.Sprite(labelMat);
+    label.position.set(center.x, labelY + 10, center.z);
+    label.scale.set(48, 12, 1);
+    label.userData = { isLabel: true, modelId: model.id };
+    label.renderOrder = 3;
+    group.add(label);
+    interactive.push(label);
+
+    clusters.set(model.id, { center, group, lines, lineGlow, lineObjects: [lines, lineGlow], label, model, clusterRadius, color, introDelay });
+  }
+
+  // selection ring (single, reused)
+  const ringMat = new THREE.SpriteMaterial({
+    map: ringTex, color: 0xffffff, blending: THREE.AdditiveBlending,
+    depthWrite: false, transparent: true, opacity: 0, fog: false
+  });
+  selectionRing = new THREE.Sprite(ringMat);
+  selectionRing.renderOrder = 4;
+  selectionRing.raycast = () => {};
+  selectionRing.visible = false;
+  scene.add(selectionRing);
+}
+
+// ============================================================
+// interaction
+// ============================================================
+let downPos = null;
+
+function setPointerFromEvent(e) {
+  pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
+  pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
+}
+
+function pickStar() {
+  raycaster.setFromCamera(pointer, camera);
+  const hits = raycaster.intersectObjects(interactive, false);
+  return hits.length ? hits[0].object : null;
+}
+
+function clearHoverTip() {
+  if (hovered && hovered !== selected) hovered.hoverTarget = 1;
+  hovered = null;
+  tipEl.classList.remove('show');
+  canvas.style.cursor = 'default';
+}
+
+let lastClientX = 0, lastClientY = 0, moveQueued = false;
+function onPointerMove(e) {
+  lastClientX = e.clientX; lastClientY = e.clientY;
+  if (moveQueued) return;
+  moveQueued = true;
+  requestAnimationFrame(() => {
+    moveQueued = false;
+    setPointerFromEvent({ clientX: lastClientX, clientY: lastClientY });
+    const obj = pickStar();
+    if (obj && obj.userData && obj.userData.topic) {
+      if (hovered !== obj.userData) {
+        if (hovered && hovered !== (selected)) hovered.hoverTarget = 1;
+        hovered = obj.userData;
+      }
+      hovered.hoverTarget = (hovered === selected) ? 1.6 : 1.45;
+      canvas.style.cursor = 'pointer';
+      tipEl.textContent = hovered.topic.label;
+      tipEl.style.left = (lastClientX + 14) + 'px';
+      tipEl.style.top = (lastClientY + 14) + 'px';
+      tipEl.classList.add('show');
+    } else {
+      const labelHit = !!(obj && obj.userData && obj.userData.isLabel);
+      if (obj && obj.userData && obj.userData.isLabel) {
+        canvas.style.cursor = 'pointer';
+      } else {
+        canvas.style.cursor = 'default';
+      }
+      if (hovered && hovered !== selected) hovered.hoverTarget = 1;
+      hovered = null;
+      tipEl.classList.remove('show');
+      if (labelHit) canvas.style.cursor = 'pointer';
+    }
+  });
+}
+
+function onPointerDown(e) {
+  downPos = { x: e.clientX, y: e.clientY };
+  controls.autoRotate = false;
+  lastInteraction = clock.getElapsedTime();
+  hintEl.classList.add('gone');
+}
+
+function onPointerUp(e) {
+  if (!downPos) return;
+  const dx = e.clientX - downPos.x, dy = e.clientY - downPos.y;
+  const moved = Math.hypot(dx, dy);
+  downPos = null;
+  if (moved >= 5) return;                 // was a drag
+  setPointerFromEvent(e);
+  const obj = pickStar();
+  if (obj && obj.userData && obj.userData.topic) {
+    selectStar(obj.userData);
+  } else if (obj && obj.userData && obj.userData.isLabel) {
+    focusCluster(obj.userData.modelId);
+  } else {
+    deselect();
+  }
+}
+
+let lastClickTime = 0;
+function onDblEmpty(e) {
+  setPointerFromEvent(e);
+  const obj = pickStar();
+  if (!obj) resetCamera();
+}
+
+function onWheel() {
+  controls.autoRotate = false;
+  lastInteraction = clock.getElapsedTime();
+  hintEl.classList.add('gone');
+}
+
+function selectStar(entry) {
+  clearHoverTip();
+  selected = entry;
+  entry.hoverTarget = 1.6;
+  // ring
+  selectionRing.visible = true;
+  selectionRing.material.color.copy(entry.sprite.material.color);
+  selectionRing.material.opacity = 0.8;
+  selectionRing.position.copy(entry.sprite.position);
+  selectionRing.scale.setScalar(entry.baseScale * 1.9);
+
+  // camera fly: mobile keeps the selected star in the uncovered upper viewport.
+  const mobile = window.innerWidth <= 640;
+  const starPos = entry.sprite.position.clone();
+  const dir = camera.position.clone().sub(starPos).normalize();
+  const camTo = starPos.clone().add(dir.multiplyScalar(mobile ? 145 : 90));
+  camTo.y += mobile ? 24 : 12;
+  const targetTo = starPos.clone();
+  if (mobile) targetTo.y -= 42;
+  tweenCamera(camTo, targetTo, 900);
+
+  renderPanel(entry.topic, entry.model);
+  openPanel();
+  focusClusterLines(entry.model.id);
+}
+
+function deselect() {
+  if (selected) selected.hoverTarget = 1;
+  selected = null;
+  selectionRing.visible = false;
+  selectionRing.material.opacity = 0;
+  closePanel();
+  restoreClusterLines();
+  lastInteraction = clock.getElapsedTime();
+}
+
+function focusCluster(modelId) {
+  clearHoverTip();
+  if (selected && selected.model.id !== modelId) deselect();
+  const c = clusters.get(modelId);
+  if (!c) return;
+  const center = c.center.clone();
+  const dir = camera.position.clone().sub(center).normalize();
+  const camTo = center.clone().add(dir.multiplyScalar(170));
+  tweenCamera(camTo, center, 900);
+  focusClusterLines(modelId);
+  lastInteraction = clock.getElapsedTime();
+}
+
+function focusClusterLines(modelId) {
+  for (const [id, c] of clusters) {
+    c._lineTarget = (id === modelId) ? 0.5 : 0.12;
+  }
+}
+function restoreClusterLines() {
+  for (const [, c] of clusters) c._lineTarget = 0.28;
+}
+
+function resetCamera() {
+  tweenCamera(defaultCameraPosition(), new THREE.Vector3(0, 0, 0), 1100);
+  restoreClusterLines();
+  lastInteraction = clock.getElapsedTime();
+}
+
+function tweenCamera(toPos, toTarget, ms = 900) {
+  camTween = {
+    fromPos: camera.position.clone(),
+    toPos: toPos.clone(),
+    fromTarget: controls.target.clone(),
+    toTarget: toTarget.clone(),
+    start: clock.getElapsedTime(),
+    ms
+  };
+  controls.enabled = false;
+}
+
+function updateCameraTween(tNow) {
+  if (!camTween) return;
+  const t = clamp((tNow - camTween.start) / (camTween.ms / 1000), 0, 1);
+  const e = easeInOutCubic(t);
+  lerpV3(camTween.fromPos, camTween.toPos, e, camera.position);
+  lerpV3(camTween.fromTarget, camTween.toTarget, e, controls.target);
+  if (t >= 1) { camTween = null; controls.enabled = true; }
+}
+
+// ---- panel DOM ----
+function openPanel() { panelEl.classList.add('open'); panelOpen = true; }
+function closePanel() { panelEl.classList.remove('open'); panelOpen = false; }
+
+function esc(s) { return String(s).replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+function renderPanel(topic, model) {
+  panelEl.querySelector('.modelchip .dot').style.background = model.color;
+  panelEl.querySelector('.modelchip .dot').style.boxShadow = `0 0 8px ${model.color}`;
+  panelEl.querySelector('.modelchip .mtxt').textContent = `${model.vendor} · ${model.name}`;
+  panelEl.querySelector('.modelchip .mtxt').style.color = model.color;
+  panelEl.querySelector('.ptopic').textContent = topic.label;
+  panelEl.querySelector('.mentions').innerHTML = `&#9650; ${fmt(topic.volume)} mentions`;
+  const fill = panelEl.querySelector('.heatfill');
+  fill.style.background = `linear-gradient(90deg, ${model.color}, #ffffff)`;
+  fill.style.width = '0%';
+  requestAnimationFrame(() => { fill.style.width = Math.round(topic.heat * 100) + '%'; });
+  panelEl.querySelector('.psummary').textContent = topic.summary;
+
+  const wrap = panelEl.querySelector('.posts');
+  wrap.innerHTML = '';
+  wrap.scrollTop = 0;
+  (topic.posts || []).forEach((post, i) => {
+    const a = document.createElement('a');
+    a.className = 'post';
+    a.href = post.url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.innerHTML =
+      `<div class="author" style="color:${model.color}">${esc(post.author)}</div>` +
+      `<div class="ptext">${esc(post.text)}</div>` +
+      `<div class="pfoot">&#9829; ${fmtK(post.likes)} &nbsp;·&nbsp; &#8646; ${fmtK(post.reposts)}</div>`;
+    a.style.opacity = '0';
+    a.style.transform = 'translateY(8px)';
+    a.style.transition = 'opacity 280ms ease, transform 280ms ease, background 160ms ease';
+    wrap.appendChild(a);
+    setTimeout(() => { a.style.opacity = '1'; a.style.transform = 'translateY(0)'; }, 40 * i + 60);
+  });
+}
+
+// ---- legend ----
+function renderLegend() {
+  const el = document.getElementById('legend');
+  el.innerHTML = '';
+  document.getElementById('gendate').textContent = formatDate(DATA.generatedAt);
+  // legend follows model order for a stable reading order
+  const byId = new Map(DATA.models.map(m => [m.id, m]));
+  MODEL_ORDER.forEach(id => {
+    const m = byId.get(id);
+    if (!m) return;
+    const chip = document.createElement('div');
+    chip.className = 'chip';
+    chip.dataset.model = id;
+    chip.innerHTML = `<span class="dot" style="background:${m.color};box-shadow:0 0 8px ${m.color}"></span><span class="nm">${esc(m.name)}</span>`;
+    chip.addEventListener('click', () => focusCluster(id));
+    chip.addEventListener('dblclick', (ev) => { ev.preventDefault(); toggleDim(id); });
+    el.appendChild(chip);
+  });
+}
+
+function formatDate(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  } catch (e) { return iso; }
+}
+
+function toggleDim(modelId) {
+  dimmedModel = (dimmedModel === modelId) ? null : modelId;
+  applyDim();
+}
+function applyDim() {
+  for (const [id, c] of clusters) {
+    const dim = (dimmedModel && id !== dimmedModel);
+    const o = dim ? 0.15 : 1;
+    c.group.traverse(obj => {
+      if ((c.lineObjects || []).includes(obj)) return;      // lines handled via _lineTarget path
+      if (obj.material && 'opacity' in obj.material) {
+        obj.userData._dimMul = o;
+      }
+    });
+    c._dimMul = o;
+  }
+  // legend chip styling
+  document.querySelectorAll('.chip').forEach(ch => {
+    const id = ch.dataset.model;
+    ch.classList.toggle('dimmed', !!(dimmedModel && id !== dimmedModel));
+  });
+}
+
+// ============================================================
+// per-frame updates
+// ============================================================
+function introAmount(t, delay, span = 0.72) {
+  return easeInOutCubic(clamp((t - delay) / span, 0, 1));
+}
+
+function updatePulses(t) {
+  for (const e of allStars) {
+    const heat = e.topic.heat;
+    const pulse = 1 + heat * 0.12 * Math.sin(t * (0.8 + heat * 1.6) + e.phase);
+    const dimMul = (dimmedModel && e.model.id !== dimmedModel) ? 0.15 : 1;
+    const intro = introAmount(t, e.introDelay);
+    const introScale = 0.2 + intro * 0.8;
+    const s = e.baseScale * introScale * e.hoverBoost * pulse;
+    e.sprite.scale.setScalar(s);
+    e.sprite.material.opacity = dimMul * intro;
+    // halo
+    const flick = 0.9 + 0.1 * Math.sin(t * 2.3 + e.phase);
+    const hoverHaloMul = 1 + (e.hoverBoost - 1) * 1.1;
+    e.halo.material.opacity = e.haloBase * flick * hoverHaloMul * dimMul * intro;
+    e.halo.scale.setScalar(s * 2.6);
+    e.halo.position.copy(e.sprite.position);
+  }
+}
+
+function updateHover() {
+  for (const e of allStars) {
+    e.hoverBoost += (e.hoverTarget - e.hoverBoost) * 0.12;
+  }
+}
+
+function updateLabelOpacity(t) {
+  for (const [id, c] of clusters) {
+    const mobile = window.innerWidth <= 640;
+    const intro = introAmount(t, c.introDelay + 0.25);
+    const d = camera.position.distanceTo(c.label.position);
+    let o = clamp(mapLinear(d, 150, 600, 0.55, 1.0), 0.55, 1.0);
+    if (dimmedModel && id !== dimmedModel) o *= 0.15;
+    c.label.material.opacity = mobile ? 0 : o * intro;
+    // line opacity tween toward target
+    const target = (c._lineTarget != null) ? c._lineTarget : 0.28;
+    let lo = c._lineOpacity == null ? 0 : c._lineOpacity;
+    lo += (target - lo) * 0.08;
+    c._lineOpacity = lo;
+    let visibleLineOpacity = lo * introAmount(t, c.introDelay + 0.48, 0.9);
+    if (dimmedModel && id !== dimmedModel) lo = Math.min(lo, 0.12 * 0.15 + 0.02);
+    if (dimmedModel && id !== dimmedModel) visibleLineOpacity = Math.min(visibleLineOpacity, 0.12 * 0.15 + 0.02);
+    c.lines.material.opacity = visibleLineOpacity;
+    c.lineGlow.material.opacity = visibleLineOpacity * 0.26;
+  }
+}
+
+function updateBackground(t, dt) {
+  if (!bgStars) return;
+  bgStars.rotation.y += dt * 0.002;
+  bgStars.rotation.x += dt * 0.0007;
+  bgStars.material.opacity = 0.64 + Math.sin(t * 0.7) * 0.035 + Math.sin(t * 1.37 + 1.8) * 0.018;
+}
+
+function updateIdleAutorotate(t) {
+  if (!panelOpen && !camTween && (t - lastInteraction) > 7) {
+    if (!controls.autoRotate) { controls.autoRotate = true; curAutoRotateSpeed = 0; }
+    curAutoRotateSpeed += (TARGET_AUTOROTATE - curAutoRotateSpeed) * 0.02;
+    controls.autoRotateSpeed = curAutoRotateSpeed;
+  }
+}
+
+function spinSelectionRing(t) {
+  if (selectionRing.visible && selected) {
+    selectionRing.position.copy(selected.sprite.position);
+    selectionRing.scale.setScalar(selected.baseScale * selected.hoverBoost * 1.9);
+    selectionRing.material.rotation = t * 0.3;
+  }
+}
+
+// ============================================================
+// loop
+// ============================================================
+const clock = new THREE.Clock();
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+  const t = clock.elapsedTime;
+  updateCameraTween(t);
+  controls.update();
+  updateBackground(t, dt);
+  updatePulses(t);
+  updateHover();
+  updateLabelOpacity(t);
+  updateIdleAutorotate(t);
+  spinSelectionRing(t);
+  composer.render();
+}
+
+// ============================================================
+// boot
+// ============================================================
+function init() {
+  computeVolumeRange();
+  initRenderer();
+  buildSky();
+  buildConstellations();
+  renderLegend();
+
+  // events
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointerleave', clearHoverTip);
+  canvas.addEventListener('wheel', onWheel, { passive: true });
+  canvas.addEventListener('dblclick', onDblEmpty);
+  document.getElementById('panelClose').addEventListener('click', deselect);
+  window.addEventListener('keydown', (e) => { if (e.key === 'Escape') deselect(); });
+
+  animate();
+}
+
+init();
+</script>
+</body>
+</html>

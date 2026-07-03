@@ -1,0 +1,695 @@
+{
+  "generatedAt": "2026-07-03T19:15:00Z",
+  "source": "x.com",
+  "models": [
+    {
+      "id": "fable-5",
+      "name": "Fable 5",
+      "vendor": "Anthropic",
+      "color": "#E8865A",
+      "topics": [
+        {
+          "id": "fable-5-agentic-prompting",
+          "label": "Agentic prompting & subagents",
+          "summary": "Users share prompting techniques for Fable 5's autonomous capabilities: use /loop for multi-step work, memory files for learning, and spawning 50+ subagents rather than step-by-step commands.",
+          "volume": 2150,
+          "heat": 0.88,
+          "posts": [
+            {
+              "author": "@kirillk_web3",
+              "text": "🚨do you understand what Anthropic just dropped for Fable 5. the official guide to prompting the most powerful public model. > most people treat Fable 5 like a chatbot. that's the mistake. don't over-engineer prompts — it degrades output. use /loop for autonomous multi-step work. give it the goal, not step-by-step commands. add a memory file. it learns from past runs. spin up 50+ subagents at once. Fable 5 isn't an assistant. it's a consultant that leads the work.",
+              "url": "https://x.com/kirillk_web3/status/2072842256780825020",
+              "likes": 12,
+              "reposts": 2,
+              "postedAt": "2026-07-03T00:38:00Z"
+            },
+            {
+              "author": "@TheWhizzAI",
+              "text": "anthropic engineer: \"fable 5 is one of those models you’ll just remember - like Sonnet 3.5, Opus 4, Opus 4.5. we just removed 90% of Claude Code’s system prompt. in 20-minute session, an Anthropic core engineer reveals the capabilities of Fable 5.\"",
+              "url": "https://x.com/TheWhizzAI/status/2072625077246693466",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-07-02T10:15:00Z"
+            },
+            {
+              "author": "@IamJunaidIslam",
+              "text": "Fable 5 is Anthropic’s first Mythos-class model available to the public. The defining trait of Fable 5 isn’t benchmark performance. It’s endurance. Fable 5 can work autonomously for longer than any previous Claude model while maintaining coherence across hours-long tasks.",
+              "url": "https://x.com/IamJunaidIslam/status/2073096614424842265",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T17:28:43Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-safety-routing",
+          "label": "Safety routing to Opus 4.8",
+          "summary": "After community backlash, Fable 5 routes prompts about frontier LLM development transparently to Claude Opus 4.8. Classifier also flags more benign coding requests.",
+          "volume": 1340,
+          "heat": 0.72,
+          "posts": [
+            {
+              "author": "@testingcatalog",
+              "text": "Anthropic is making changes to the way how Fable 5 responds to prompts related to “frontier LLM development” after community backlash. These requests will be transparently routed to Claude Opus 4.8.",
+              "url": "https://x.com/testingcatalog/status/2065008942791471457",
+              "likes": 382,
+              "reposts": 14,
+              "postedAt": "2026-06-11T09:51:12Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "Anthropic shipped Fable 5 with safety classifiers, refusals, fallback handling. Some requests could be blocked or rerouted to another Claude model. Blocked Fable requests would be sent to Opus 4.8, and it acknowledged that the classifier could flag benign coding and debugging requests more often.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-export-suspension",
+          "label": "Export controls & suspension",
+          "summary": "US export-control directive caused global suspension of Fable 5 and Mythos 5 access in mid-June; restored July 1 with updated safeguards and routing.",
+          "volume": 1680,
+          "heat": 0.59,
+          "posts": [
+            {
+              "author": "@diamai_",
+              "text": "Jun 12: Fable 5 and Mythos 5 were suspended. The US government issued an export-control directive requiring Anthropic to suspend access to Fable 5 and Mythos 5 for foreign nationals. ... Jun 30: ... the export controls had been lifted and Fable 5 would return globally on July 1.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            },
+            {
+              "author": "@birdabo",
+              "text": "Anthropic is skipping Fable 5 and giving us Claude-Sonnet-5 instead. oh man, it doesn’t look good. we might be witnessing the down fall of Anthropic.",
+              "url": "https://x.com/birdabo/status/2068735577860804719",
+              "likes": 435,
+              "reposts": 14,
+              "postedAt": "2026-06-21T16:39:31Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-mythos-endurance",
+          "label": "Mythos-class long endurance",
+          "summary": "Positioned above standard models, Fable 5 focuses on persistent collaboration and sustained intelligence over hours rather than short benchmark bursts for messy real work.",
+          "volume": 920,
+          "heat": 0.81,
+          "posts": [
+            {
+              "author": "@IamJunaidIslam",
+              "text": "This isn’t just another model release. It’s a signal of where AI is heading next. A tier above Claude Opus. ... Real work is messy. ... The biggest bottleneck in AI hasn’t always been intelligence. It has been attention span. ... Fable 5 pushes AI closer to ... Persistent collaboration.",
+              "url": "https://x.com/IamJunaidIslam/status/2073096614424842265",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T17:28:43Z"
+            },
+            {
+              "author": "@kirillk_web3",
+              "text": "Fable 5 isn't an assistant. it's a consultant that leads the work. read it before you write another prompt. bookmark it. this changes everything.",
+              "url": "https://x.com/kirillk_web3/status/2072842256780825020",
+              "likes": 12,
+              "reposts": 2,
+              "postedAt": "2026-07-03T00:38:00Z"
+            }
+          ]
+        },
+        {
+          "id": "fable-5-competitor-talk",
+          "label": "Comparisons & Sonnet 5 rumors",
+          "summary": "Mixed sentiment: some claim Anthropic is skipping Fable 5 for Sonnet 5; others compare directly to upcoming GPT-5.6 and debate the future of the lineup.",
+          "volume": 760,
+          "heat": 0.48,
+          "posts": [
+            {
+              "author": "@birdabo",
+              "text": "Anthropic is skipping Fable 5 and giving us Claude-Sonnet-5 instead. oh man, it doesn’t look good. we might be witnessing the down fall of Anthropic. OpenAI its your turn. Drop GPT-5.6 already.",
+              "url": "https://x.com/birdabo/status/2068735577860804719",
+              "likes": 435,
+              "reposts": 14,
+              "postedAt": "2026-06-21T16:39:31Z"
+            },
+            {
+              "author": "@SliceX75307",
+              "text": "When GPT 5.6 drops, and is on par with fable and is also included in subscription, people will switch to ChatGPT.",
+              "url": "https://x.com/SliceX75307/status/2073110713959387548",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:24:45Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "opus-4-8",
+      "name": "Opus 4.8",
+      "vendor": "Anthropic",
+      "color": "#F2C14E",
+      "topics": [
+        {
+          "id": "opus-4-8-cad-engineering",
+          "label": "Mechanical CAD design strength",
+          "summary": "Opus 4.8 excels at mechanical CAD tasks, running Adam extensions in Onshape and Fusion 360. Users see it as a new frontier model for engineering workflows.",
+          "volume": 980,
+          "heat": 0.65,
+          "posts": [
+            {
+              "author": "@Oluwaphilemon1",
+              "text": "Anthropic claude Opus 4.8 is a new frontier model at mechanical CAD design. Adam extension run in both Onshape and Fusion! Imagine what Claude Fable 5 will do… GPT-5.6 can't keep up.",
+              "url": "https://x.com/Oluwaphilemon1/status/2072211416635900274",
+              "likes": 8,
+              "reposts": 2,
+              "postedAt": "2026-07-01T06:51:16Z"
+            },
+            {
+              "author": "@lemonDefi1",
+              "text": "Anthropic claude Opus 4.8 is a new frontier model at mechanical CAD design. Adam extension run in both Onshape and Fusion!",
+              "url": "https://x.com/lemonDefi1/status/2072211615286530285",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-07-01T06:52:03Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-fast-mode",
+          "label": "Fast Mode speed/cost gains",
+          "summary": "Launch adds Fast Mode running up to 2.5x faster at one-third the cost while giving users control over speed vs deeper thinking for coding and agentic work.",
+          "volume": 1120,
+          "heat": 0.58,
+          "posts": [
+            {
+              "author": "@StockSavvyShay",
+              "text": "Anthropic launched Claude Opus 4.8, upgrading its top model for coding, agentic workflows, reasoning and knowledge work. The update adds Fast Mode which runs up to 2.5x faster at one-third the cost while giving users more control over speed versus deeper thinking.",
+              "url": "https://x.com/StockSavvyShay/status/2060044349606703467",
+              "likes": 390,
+              "reposts": 38,
+              "postedAt": "2026-05-28T17:03:41Z"
+            },
+            {
+              "author": "@synthwavedd",
+              "text": "Claude Opus 4.8 is what Opus 4.7 should've been - it's a noticeable improvement, but not a big jump by any means.",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-agentic-reasoning",
+          "label": "Agentic & reasoning upgrades",
+          "summary": "Noticeable improvements in agentic workflows, reasoning and knowledge work. Users note it as what previous Opus should have been, with ongoing Mythos-related refinements.",
+          "volume": 1450,
+          "heat": 0.69,
+          "posts": [
+            {
+              "author": "@synthwavedd",
+              "text": "Claude Opus 4.8 is what Opus 4.7 should've been - it's a noticeable improvement, but not a big jump by any means. Anthropic have been sandbagging their models whilst work on the new Mythos safeguards was ongoing. This work is now coming to a close.",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            },
+            {
+              "author": "@arpit_bhayani",
+              "text": "Claude Opus 4.8 is out; time for the other Anthropic models to regress automagically.",
+              "url": "https://x.com/arpit_bhayani/status/2060210776477225056",
+              "likes": 640,
+              "reposts": 8,
+              "postedAt": "2026-05-29T04:05:00Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-mythos-safeguards",
+          "label": "Mythos safeguards development",
+          "summary": "Opus 4.8 development tied to Mythos safeguards work; improvements now surfacing as that effort closes, setting stage for stronger Fable-class releases.",
+          "volume": 620,
+          "heat": 0.41,
+          "posts": [
+            {
+              "author": "@synthwavedd",
+              "text": "Anthropic have been sandbagging their models whilst work on the new Mythos safeguards was ongoing. This work is now coming to a close. Exciting few weeks ahead!",
+              "url": "https://x.com/synthwavedd/status/2060751918780068062",
+              "likes": 590,
+              "reposts": 13,
+              "postedAt": "2026-05-30T15:55:19Z"
+            },
+            {
+              "author": "@StockSavvyShay",
+              "text": "Anthropic launched Claude Opus 4.8, upgrading its top model for coding, agentic workflows, reasoning and knowledge work.",
+              "url": "https://x.com/StockSavvyShay/status/2060044349606703467",
+              "likes": 390,
+              "reposts": 38,
+              "postedAt": "2026-05-28T17:03:41Z"
+            }
+          ]
+        },
+        {
+          "id": "opus-4-8-fallback-role",
+          "label": "Fallback for Fable 5 sensitive tasks",
+          "summary": "Opus 4.8 serves as the safe fallback when Fable 5's classifiers block or reroute frontier and certain coding prompts due to new safety layers.",
+          "volume": 540,
+          "heat": 0.67,
+          "posts": [
+            {
+              "author": "@testingcatalog",
+              "text": "These requests will be transparently routed to Claude Opus 4.8.",
+              "url": "https://x.com/testingcatalog/status/2065008942791471457",
+              "likes": 382,
+              "reposts": 14,
+              "postedAt": "2026-06-11T09:51:12Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "Blocked Fable requests would be sent to Opus 4.8, and it acknowledged that the classifier could flag benign coding and debugging requests more often.",
+              "url": "https://x.com/diamai_/status/2072820750428303404",
+              "likes": 3,
+              "reposts": 1,
+              "postedAt": "2026-07-02T23:12:32Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gpt-5-6",
+      "name": "GPT-5.6",
+      "vendor": "OpenAI",
+      "color": "#5CD6B9",
+      "topics": [
+        {
+          "id": "gpt-5-6-release-leaks",
+          "label": "Release timing & leaks",
+          "summary": "Heavy leaks and rumors of June 23 drop or imminent preview. OpenAI positioning GPT-5.6 series against Anthropic while navigating government approval for release.",
+          "volume": 2450,
+          "heat": 0.93,
+          "posts": [
+            {
+              "author": "@mark_k",
+              "text": "GPT-5.6 (OpenAI): Heavy leaks point to a possible June 23 drop (or very soon after). Rumored features: 1.5M token context, major gains in long-horizon coding & agentic workflows, faster Codex responses, and aggressive pricing to undercut Anthropic.",
+              "url": "https://x.com/mark_k/status/2069169916432003105",
+              "likes": 1102,
+              "reposts": 27,
+              "postedAt": "2026-06-22T21:25:26Z"
+            },
+            {
+              "author": "@Amank1412",
+              "text": "Another GPT-5.6 leak. Rumors say OpenAI could drop GPT-5.6 on June 23. > Its 3× cheaper than Fable > Up to 1.5M token context > Stronger agentic coding workflows > Direct competition with Claude style systems",
+              "url": "https://x.com/Amank1412/status/2066104778162348132",
+              "likes": 728,
+              "reposts": 53,
+              "postedAt": "2026-06-14T10:25:40Z"
+            },
+            {
+              "author": "@KaiXCreator",
+              "text": "Another GPT-5.6 leak. Rumors say OpenAI could drop GPT-5.6 on June 23. • Its ~3× cheaper than Fable • Up to 1.5M token context • Stronger agentic coding workflows • Direct competition with Claude-style systems",
+              "url": "https://x.com/KaiXCreator/status/2066070890794962949",
+              "likes": 848,
+              "reposts": 74,
+              "postedAt": "2026-06-14T08:11:00Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-tiered-family",
+          "label": "Sol / Terra / Luna tiers",
+          "summary": "OpenAI previewed GPT-5.6 as three models: Sol (most powerful, >Mythos), Terra (on par with Fable 5), Luna (fast low-cost). All optimized for long agentic workflows.",
+          "volume": 1890,
+          "heat": 0.84,
+          "posts": [
+            {
+              "author": "@UnDrogado_poeta",
+              "text": "OpenAI announced its Mythos > GPT5.6. Altman responded with three models at once... Sol > more powerful than Mythos. Terra > on par with Fable 5. All are optimized for agentic workflows lasting dozens of hours (!) without human intervention. GPT-5.6 will be released in the coming weeks.",
+              "url": "https://x.com/UnDrogado_poeta/status/2071210520045060327",
+              "likes": 43,
+              "reposts": 0,
+              "postedAt": "2026-06-28T12:34:03Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "OpenAI introduced the GPT-5.6 series on Jun 26: Sol as the flagship model, Terra as the balanced model, and Luna as the fast low-cost model. ... Sol was the flagship model, Terra the balanced model and Luna the low-cost model.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-context-agentic",
+          "label": "1.5M context & agentic coding",
+          "summary": "Rumored 1.5 million token context, major gains in long-horizon coding and agentic workflows, plus faster Codex. Early tests show strength in complex 3D and code production.",
+          "volume": 1560,
+          "heat": 0.76,
+          "posts": [
+            {
+              "author": "@mark_k",
+              "text": "Rumored features: 1.5M token context, major gains in long-horizon coding & agentic workflows, faster Codex responses, and aggressive pricing to undercut Anthropic. Early user tests (shared on X) show GPT-5.6 Pro already impressive in 3D modeling/Blender and producing more code than Fable in some cases.",
+              "url": "https://x.com/mark_k/status/2069169916432003105",
+              "likes": 1102,
+              "reposts": 27,
+              "postedAt": "2026-06-22T21:25:26Z"
+            },
+            {
+              "author": "@diamai_",
+              "text": "GPT-5.6 also introduced max reasoning effort and an ultra mode that uses subagents for complex work. ... improved agentic capability in coding, biology and cybersecurity.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-limited-preview",
+          "label": "Limited preview & gov oversight",
+          "summary": "GPT-5.6 Sol released as limited preview for trusted partners per government request, with heavy red-teaming and cyber-safety measures attached before broader rollout.",
+          "volume": 1320,
+          "heat": 0.71,
+          "posts": [
+            {
+              "author": "@diamai_",
+              "text": "OpenAI said it had shared plans and model capabilities with the US government, and that at the government's request it was starting with a limited preview for a small group of trusted partners before broader release. ... Sol put OpenAI in the same June pattern as Anthropic.",
+              "url": "https://x.com/diamai_/status/2073110374094962748",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:23:24Z"
+            },
+            {
+              "author": "@AndrewCurran_",
+              "text": "They may already have been/are blocked, we have no way of knowing. OpenAI has been trying to get GPT-5.6 approved for release since before Fable was banned for example.",
+              "url": "https://x.com/AndrewCurran_/status/2073110159367590377",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:22:33Z"
+            }
+          ]
+        },
+        {
+          "id": "gpt-5-6-pricing-competition",
+          "label": "Aggressive pricing vs Fable",
+          "summary": "Positioned as ~3x cheaper than Fable with competitive or superior agentic capabilities. Users speculate on subscription impact and switching pressure between platforms.",
+          "volume": 870,
+          "heat": 0.55,
+          "posts": [
+            {
+              "author": "@Amank1412",
+              "text": "Its 3× cheaper than Fable. ... Will GPT-5.6 cook Fable? Lets discuss in comments.",
+              "url": "https://x.com/Amank1412/status/2066104778162348132",
+              "likes": 728,
+              "reposts": 53,
+              "postedAt": "2026-06-14T10:25:40Z"
+            },
+            {
+              "author": "@SliceX75307",
+              "text": "When GPT 5.6 drops, and is on par with fable and is also included in subscription, people will switch to ChatGPT. The incentive/pressure to switch will only grow with more GPT releases (5.7, 6).",
+              "url": "https://x.com/SliceX75307/status/2073110713959387548",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:24:45Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gemini-3",
+      "name": "Gemini 3",
+      "vendor": "Google",
+      "color": "#8B7CF6",
+      "topics": [
+        {
+          "id": "gemini-3-image-releases",
+          "label": "New image models rollout",
+          "summary": "Google released Gemini 3.1 Flash Image for high-volume cheap generation and Gemini 3 Pro Image for quality creative work, filling gaps while flagship Pro slips.",
+          "volume": 780,
+          "heat": 0.52,
+          "posts": [
+            {
+              "author": "@aiseomastery",
+              "text": "Google released two new image models this week, Gemini 3.1 Flash Image for cheap high volume generation and Gemini 3 Pro Image for quality first creative work. Meanwhile Gemini 3.5 Pro slipped again, now expected sometime in July.",
+              "url": "https://x.com/aiseomastery/status/2072458418951188735",
+              "likes": 1,
+              "reposts": 0,
+              "postedAt": "2026-07-01T23:12:46Z"
+            },
+            {
+              "author": "@JulianGoldieSEO",
+              "text": "Google held back their best AI on purpose. And the one they shipped for free is already breaking benchmarks.",
+              "url": "https://x.com/JulianGoldieSEO/status/2070946152527343689",
+              "likes": 3,
+              "reposts": 0,
+              "postedAt": "2026-06-27T19:03:33Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-pro-delays",
+          "label": "3.5 Pro delays & testing",
+          "summary": "Gemini 3.5 Pro repeatedly slips; currently testing on arena as Gemini 3.1 Pro with updated March 2026 knowledge cutoff. Users track hidden variants and benchmark progress.",
+          "volume": 1250,
+          "heat": 0.64,
+          "posts": [
+            {
+              "author": "@Waguri_Kaoruko8",
+              "text": "🚨Gemini 3.5 pro got its knowledge cutoff bumped to March 2026 and is now testing on https://arena.ai/ as Gemini 3.1 pro. Currently there are two models hiding under Gemini 3.1 pro on arena - the unannounced gemini 3.5 pro and the February gemini 3.1 pro",
+              "url": "https://x.com/Waguri_Kaoruko8/status/2069239435003097586",
+              "likes": 349,
+              "reposts": 15,
+              "postedAt": "2026-06-23T02:01:40Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High. two new Gemini models testing in Arena under the name 3.1 pro, 3.5 flash and 3 flash",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-benchmarks-comeback",
+          "label": "Benchmark & creative comeback",
+          "summary": "Gemini 3.5 Pro showing strong frontend code outputs and creative confidence. Leaked high benchmarks for 3.1 Pro including SWE-Bench and AIME; positioned as comeback vs Fable and others.",
+          "volume": 910,
+          "heat": 0.59,
+          "posts": [
+            {
+              "author": "@ggg78g89",
+              "text": "Gemini 3.5 Pro is the comeback model Google needed. Just look at these frontend outputs: clean taste, sharp layouts, smooth polish, and real creative confidence. This time Google is coming back hard. Fable 5, GLM-5.2, and Kimi K2.7 are getting outpaced.",
+              "url": "https://x.com/ggg78g89/status/2072587420143628797",
+              "likes": 54,
+              "reposts": 1,
+              "postedAt": "2026-07-02T07:45:22Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High.",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-flash-performance",
+          "label": "Flash tier strong performance",
+          "summary": "Free Gemini 3.5 Flash already breaking benchmarks (76%+ Terminal-Bench) and running 4x faster than comparable frontier models. Seen as warm-up for stronger Pro versions.",
+          "volume": 670,
+          "heat": 0.47,
+          "posts": [
+            {
+              "author": "@JulianGoldieSEO",
+              "text": "The free version — Gemini 3.5 Flash — scores 76.2% on Terminal-Bench 2.1 and 83.6% on MCP Atlas. It runs 4x faster than comparable frontier models at the same capability level. And Google called it the warm-up.",
+              "url": "https://x.com/JulianGoldieSEO/status/2070946152527343689",
+              "likes": 3,
+              "reposts": 0,
+              "postedAt": "2026-06-27T19:03:33Z"
+            },
+            {
+              "author": "@aiseomastery",
+              "text": "Google released two new image models this week, Gemini 3.1 Flash Image for cheap high volume generation and Gemini 3 Pro Image for quality first creative work.",
+              "url": "https://x.com/aiseomastery/status/2072458418951188735",
+              "likes": 1,
+              "reposts": 0,
+              "postedAt": "2026-07-01T23:12:46Z"
+            }
+          ]
+        },
+        {
+          "id": "gemini-3-official-excitement",
+          "label": "Official Gemini 3 excitement",
+          "summary": "Google DeepMind leads celebrate Gemini 3 release for broad product experiences in Gemini App, Search, AI Studio and Vertex AI with strong benchmark results across domains.",
+          "volume": 1520,
+          "heat": 0.38,
+          "posts": [
+            {
+              "author": "@JeffDean",
+              "text": "I’m really excited about our release of Gemini 3 today, the result of hard work by many, many people in the Gemini team and all across Google! We’ve built many exciting new product experiences with it... The model performs quite well on a wide range of benchmarks.",
+              "url": "https://x.com/JeffDean/status/1990815514520961199",
+              "likes": 3426,
+              "reposts": 339,
+              "postedAt": "2025-11-18T16:13:00Z"
+            },
+            {
+              "author": "@HarshithLucky3",
+              "text": "Google is cooking 🔥 Gemini 3.5 Flash High vs Gemini 3.6 or 4 Flash* vs Gemini 3.5 Pro* vs Claude Fable 5 High.",
+              "url": "https://x.com/HarshithLucky3/status/2072634855855448509",
+              "likes": 446,
+              "reposts": 26,
+              "postedAt": "2026-07-02T10:53:51Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "glm-5-2",
+      "name": "GLM 5.2",
+      "vendor": "Zhipu",
+      "color": "#4E9CFF",
+      "topics": [
+        {
+          "id": "glm-5-2-open-weight",
+          "label": "Open-weight flagship release",
+          "summary": "Zhipu released GLM-5.2 as 744B parameter open-weight model with 1M token context, available via chat.z.ai and increasingly through HF inference providers.",
+          "volume": 1380,
+          "heat": 0.61,
+          "posts": [
+            {
+              "author": "@mztacat",
+              "text": "Testing the GLM 5.2 by Zhipu AI. GLM-5.2 is an open-weight large language model... Total parameter: 744B Context window: 1M token... Benchmarks almost on par with Claude 4.8 Opus, GPT-5.5, and Gemini 3.1 Pro. Can be run fully locally via llama.cpp and Unsloth docs.",
+              "url": "https://x.com/mztacat/status/2068637916545347670",
+              "likes": 259,
+              "reposts": 14,
+              "postedAt": "2026-06-21T10:11:27Z"
+            },
+            {
+              "author": "@gudanglifehack",
+              "text": "Zhipu AI releases GLM-5.2 open-weight AI model matching leading models in coding, agentic tasks, and security bug detection. ... 750B parameter open-weight model with 1M-token context, excelling in coding (62.1 on SWE-bench Pro), terminal work (81.0 on Terminal-bench 2.1)...",
+              "url": "https://x.com/gudanglifehack/status/2071128101057347844",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-06-28T07:06:33Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-benchmark-parity",
+          "label": "Near-frontier coding & agentic",
+          "summary": "GLM-5.2 achieves coding and agentic performance within a percentage point of Opus 4.8 / Mythos on key benchmarks at a fraction of the cost. Strong in SWE-Bench, terminal, tool use and security.",
+          "volume": 1120,
+          "heat": 0.73,
+          "posts": [
+            {
+              "author": "@gudanglifehack",
+              "text": "Zhipu AI released GLM-5.2, a 750B parameter open-weight model with 1M-token context, excelling in coding (62.1 on SWE-bench Pro), terminal work (81.0 on Terminal-bench 2.1), tool use, agentic tasks, and security bug detection comparable to Anthropic's Claude Mythos.",
+              "url": "https://x.com/gudanglifehack/status/2071128101057347844",
+              "likes": 4,
+              "reposts": 0,
+              "postedAt": "2026-06-28T07:06:33Z"
+            },
+            {
+              "author": "@kypwny",
+              "text": "GLM-5.2 is Zhipu's model, it has already been out, it does not match Mythos. It is barely on par with Opus 4.5/4.6 or GPT-5.5 in my real world use cases. Super cheap tho.",
+              "url": "https://x.com/kypwny/status/2071168627928383868",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-06-28T09:47:36Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-local-quant",
+          "label": "Local run & quantization",
+          "summary": "Massive model requires heavy quantization (Unsloth GGUF) for local use on high-RAM Macs or servers. 1-bit quant still hundreds of GB; not consumer but viable on serious hardware.",
+          "volume": 690,
+          "heat": 0.29,
+          "posts": [
+            {
+              "author": "@mztacat",
+              "text": "Unsloth compressed it dramatically using their Dynamic GGUF technology. 8-bit Quantization takes upto 800GB ... 1-bit takes 217GB... Even the smallest 1-bit quant needs 217GB of disk and 223GB RAM, which is not consumer-grade hardware. You need a 256GB unified memory Mac (M3/M4 Ultra) or serious server RAM.",
+              "url": "https://x.com/mztacat/status/2068637916545347670",
+              "likes": 259,
+              "reposts": 14,
+              "postedAt": "2026-06-21T10:11:27Z"
+            },
+            {
+              "author": "@bridgemindai",
+              "text": "GLM 5 just dropped and nobody is talking about it. Zhipu quietly released their new flagship model on https://chat.z.ai/ Chat, coding, and agentic tasks.",
+              "url": "https://x.com/bridgemindai/status/2021586514484867336",
+              "likes": 262,
+              "reposts": 7,
+              "postedAt": "2026-02-11T14:05:58Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-cost-advantage",
+          "label": "Dramatically lower cost",
+          "summary": "Priced at roughly 1/5th the cost of frontier closed models while delivering near-parity on agentic and coding tasks. Quiet release strategy contrasted with US lab drama.",
+          "volume": 850,
+          "heat": 0.54,
+          "posts": [
+            {
+              "author": "@MikeJosephAZ",
+              "text": "Zhipu's GLM 5.2 AI model released. The Chinese AI startup's new open source model has blown past every other open release and now sits within a percentage point of Anthropic's Opus 4.8 on one closely watched agentic benchmark, at roughly a fifth of the cost.",
+              "url": "https://x.com/MikeJosephAZ/status/2070933933869670890",
+              "likes": 0,
+              "reposts": 1,
+              "postedAt": "2026-06-27T18:15:00Z"
+            },
+            {
+              "author": "@kypwny",
+              "text": "GLM-5.2 is Zhipu's model... Super cheap tho.",
+              "url": "https://x.com/kypwny/status/2071168627928383868",
+              "likes": 2,
+              "reposts": 0,
+              "postedAt": "2026-06-28T09:47:36Z"
+            }
+          ]
+        },
+        {
+          "id": "glm-5-2-workflow-adoption",
+          "label": "Adoption in dev workflows",
+          "summary": "Open models like GLM-5.2 increasingly plugged into real tools: selectable in Claude Code via Hugging Face providers; praised in combos with other open models for agentic setups.",
+          "volume": 540,
+          "heat": 0.66,
+          "posts": [
+            {
+              "author": "@_akhaliq",
+              "text": "I use glm 5.2 in claude code via hf claude almost daily now. moved over completely to open models",
+              "url": "https://x.com/_akhaliq/status/2073109439083585817",
+              "likes": 5,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:19:41Z"
+            },
+            {
+              "author": "@Miss_Baphy",
+              "text": "@NousResearch Hermes + @Zai_org GLM-5.2 Is the winning combination of any AI setup I've ever used. The powercouple of the Agentic AI world we didn't see coming.",
+              "url": "https://x.com/Miss_Baphy/status/2073110864366862336",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:25:21Z"
+            },
+            {
+              "author": "@imnotchalk",
+              "text": "GLM-5.2 is even better than gemini",
+              "url": "https://x.com/imnotchalk/status/2073109590783484223",
+              "likes": 0,
+              "reposts": 0,
+              "postedAt": "2026-07-03T18:20:17Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 An interactive 3D constellation map of AI-model chatter on X. Each model is a constellation, each topic is a star (size = mention volume, pulse = heat). Drag to rotate, scroll to zoom, click a star to read the actual posts behind it.
 
-**Live demo: https://fujibee.github.io/fable5-demo-ai-x-constellation/**
+**Live demo: https://fujibee.github.io/agmsg-demo-fable5-x-constellation/**
 
 Built end-to-end by a team of AI agents from **a single human instruction**, inside the [agmsg](https://github.com/fujibee/agmsg) desktop app.
 
